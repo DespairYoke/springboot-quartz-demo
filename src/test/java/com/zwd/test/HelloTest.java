@@ -2,6 +2,7 @@ package com.zwd.test;
 
 import com.zwd.schedule.demo.Main;
 import com.zwd.schedule.demo.jobs.DataParseJob;
+import com.zwd.schedule.demo.jobs.DumbJob;
 import com.zwd.schedule.demo.jobs.HelloJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,6 +61,25 @@ public class HelloTest {
         JobDetail jobDetail = JobBuilder.newJob(DataParseJob.class)
                 .usingJobData("id",5)
                 .usingJobData("name","zwd")
+                .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("myTrigger","group1")
+                .startNow()
+                .withSchedule(simpleSchedule()
+                        .withIntervalInSeconds(20)
+                        .repeatForever())
+                .build();
+        scheduler.scheduleJob(jobDetail,trigger);
+        Thread.sleep(50000);
+    }
+
+    /**参数映射*/
+    @Test
+    public void testHello4() throws SchedulerException, InterruptedException {
+        JobDetail jobDetail = JobBuilder.newJob(DumbJob.class)
+                .usingJobData("jobSays", "Hello World!")
+                .usingJobData("myFloatValue", 3.141f)
                 .build();
 
         Trigger trigger = TriggerBuilder.newTrigger()
